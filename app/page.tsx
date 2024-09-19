@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Calc from './components/calc';
+
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-8">

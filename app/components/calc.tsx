@@ -1,172 +1,153 @@
-'use client';
+"use client"
 
-import { useState, useRef, useEffect } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon } from 'lucide-react';
+import { useState, useRef, useEffect } from "react"
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon } from "lucide-react"
 
 type Calculation = {
-  id: string;
-  expression: string;
-  result: string;
-  isStarred: boolean;
-};
+  id: string
+  expression: string
+  result: string
+  isStarred: boolean
+}
 
 type Tab = {
-  id: string;
-  name: string;
-  calculations: Calculation[];
-};
+  id: string
+  name: string
+  calculations: Calculation[]
+}
 
 export default function MultiTabCalculator() {
-  const [tabs, setTabs] = useState<Tab[]>([]);
-  const [inputs, setInputs] = useState<{ [key: string]: string }>({});
-  const [starredCalculations, setStarredCalculations] = useState<Calculation[]>(
-    []
-  );
-  const [editingTabId, setEditingTabId] = useState<string | null>(null);
-  const editInputRef = useRef<HTMLInputElement>(null);
+  const [tabs, setTabs] = useState<Tab[]>([])
+  const [inputs, setInputs] = useState<{ [key: string]: string }>({})
+  const [starredCalculations, setStarredCalculations] = useState<Calculation[]>([])
+  const [editingTabId, setEditingTabId] = useState<string | null>(null)
+  const editInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    const savedTabs = localStorage.getItem('calculatorTabs');
-    const savedStarred = localStorage.getItem('starredCalculations');
+    const savedTabs = localStorage.getItem('calculatorTabs')
+    const savedStarred = localStorage.getItem('starredCalculations')
     if (savedTabs) {
-      setTabs(JSON.parse(savedTabs));
+      setTabs(JSON.parse(savedTabs))
     } else {
-      setTabs([{ id: 'tab1', name: 'Tab 1', calculations: [] }]);
+      setTabs([{ id: "tab1", name: "Tab 1", calculations: [] }])
     }
     if (savedStarred) {
-      setStarredCalculations(JSON.parse(savedStarred));
+      setStarredCalculations(JSON.parse(savedStarred))
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    localStorage.setItem('calculatorTabs', JSON.stringify(tabs));
-  }, [tabs]);
+    localStorage.setItem('calculatorTabs', JSON.stringify(tabs))
+  }, [tabs])
 
   useEffect(() => {
-    localStorage.setItem(
-      'starredCalculations',
-      JSON.stringify(starredCalculations)
-    );
-  }, [starredCalculations]);
+    localStorage.setItem('starredCalculations', JSON.stringify(starredCalculations))
+  }, [starredCalculations])
 
   useEffect(() => {
     if (editingTabId && editInputRef.current) {
-      editInputRef.current.focus();
+      editInputRef.current.focus()
     }
-  }, [editingTabId]);
+  }, [editingTabId])
 
   const addTab = () => {
-    const newTabId = `tab${tabs.length + 1}`;
-    setTabs([
-      ...tabs,
-      { id: newTabId, name: `Tab ${tabs.length + 1}`, calculations: [] },
-    ]);
-    setInputs({ ...inputs, [newTabId]: '' });
-  };
+    const newTabId = `tab${tabs.length + 1}`
+    setTabs([...tabs, { id: newTabId, name: `Tab ${tabs.length + 1}`, calculations: [] }])
+    setInputs({ ...inputs, [newTabId]: "" })
+  }
 
   const calculate = (tabId: string) => {
     try {
-      const result = eval(inputs[tabId]);
+      const result = eval(inputs[tabId])
       const calculation: Calculation = {
         id: Date.now().toString(),
         expression: inputs[tabId],
         result: result.toString(),
-        isStarred: false,
-      };
-      const updatedTabs = tabs.map((tab) =>
+        isStarred: false
+      }
+      const updatedTabs = tabs.map(tab =>
         tab.id === tabId
           ? { ...tab, calculations: [...tab.calculations, calculation] }
           : tab
-      );
-      setTabs(updatedTabs);
-      setInputs({ ...inputs, [tabId]: '' });
+      )
+      setTabs(updatedTabs)
+      setInputs({ ...inputs, [tabId]: "" })
     } catch (error) {
-      console.error('Invalid calculation:', error);
+      console.error("Invalid calculation:", error)
     }
-  };
+  }
 
   const onDragEnd = (result: any) => {
-    if (!result.destination) return;
+    if (!result.destination) return
 
-    if (result.type === 'TAB') {
-      const newTabs = Array.from(tabs);
-      const [reorderedItem] = newTabs.splice(result.source.index, 1);
-      newTabs.splice(result.destination.index, 0, reorderedItem);
-      setTabs(newTabs);
+    if (result.type === "TAB") {
+      const newTabs = Array.from(tabs)
+      const [reorderedItem] = newTabs.splice(result.source.index, 1)
+      newTabs.splice(result.destination.index, 0, reorderedItem)
+      setTabs(newTabs)
     } else {
-      const sourceTab = tabs.find(
-        (tab) => tab.id === result.source.droppableId
-      );
-      const destTab = tabs.find(
-        (tab) => tab.id === result.destination.droppableId
-      );
+      const sourceTab = tabs.find(tab => tab.id === result.source.droppableId)
+      const destTab = tabs.find(tab => tab.id === result.destination.droppableId)
 
       if (sourceTab && destTab) {
-        const sourceCalcs = Array.from(sourceTab.calculations);
-        const destCalcs =
-          sourceTab === destTab
-            ? sourceCalcs
-            : Array.from(destTab.calculations);
-        const [reorderedItem] = sourceCalcs.splice(result.source.index, 1);
-        destCalcs.splice(result.destination.index, 0, reorderedItem);
+        const sourceCalcs = Array.from(sourceTab.calculations)
+        const destCalcs = sourceTab === destTab ? sourceCalcs : Array.from(destTab.calculations)
+        const [reorderedItem] = sourceCalcs.splice(result.source.index, 1)
+        destCalcs.splice(result.destination.index, 0, reorderedItem)
 
-        const newTabs = tabs.map((tab) => {
+        const newTabs = tabs.map(tab => {
           if (tab.id === sourceTab.id) {
-            return { ...tab, calculations: sourceCalcs };
+            return { ...tab, calculations: sourceCalcs }
           }
           if (tab.id === destTab.id) {
-            return { ...tab, calculations: destCalcs };
+            return { ...tab, calculations: destCalcs }
           }
-          return tab;
-        });
+          return tab
+        })
 
-        setTabs(newTabs);
+        setTabs(newTabs)
       }
     }
-  };
+  }
 
   const startEditing = (tabId: string) => {
-    setEditingTabId(tabId);
-  };
+    setEditingTabId(tabId)
+  }
 
   const finishEditing = (tabId: string, newName: string) => {
-    setTabs(
-      tabs.map((tab) =>
-        tab.id === tabId ? { ...tab, name: newName || tab.name } : tab
-      )
-    );
-    setEditingTabId(null);
-  };
+    setTabs(tabs.map(tab => 
+      tab.id === tabId ? { ...tab, name: newName || tab.name } : tab
+    ))
+    setEditingTabId(null)
+  }
 
   const toggleStar = (tabId: string, calcId: string) => {
-    const updatedTabs = tabs.map((tab) => {
+    const updatedTabs = tabs.map(tab => {
       if (tab.id === tabId) {
-        const updatedCalcs = tab.calculations.map((calc) => {
+        const updatedCalcs = tab.calculations.map(calc => {
           if (calc.id === calcId) {
-            const updatedCalc = { ...calc, isStarred: !calc.isStarred };
+            const updatedCalc = { ...calc, isStarred: !calc.isStarred }
             if (updatedCalc.isStarred) {
-              setStarredCalculations([...starredCalculations, updatedCalc]);
+              setStarredCalculations([...starredCalculations, updatedCalc])
             } else {
-              setStarredCalculations(
-                starredCalculations.filter((c) => c.id !== calcId)
-              );
+              setStarredCalculations(starredCalculations.filter(c => c.id !== calcId))
             }
-            return updatedCalc;
+            return updatedCalc
           }
-          return calc;
-        });
-        return { ...tab, calculations: updatedCalcs };
+          return calc
+        })
+        return { ...tab, calculations: updatedCalcs }
       }
-      return tab;
-    });
-    setTabs(updatedTabs);
-  };
+      return tab
+    })
+    setTabs(updatedTabs)
+  }
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -174,39 +155,27 @@ export default function MultiTabCalculator() {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="tabs" type="TAB" direction="horizontal">
           {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-wrap gap-4 mb-4"
-            >
+            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4">
               {tabs.map((tab, index) => (
                 <Draggable key={tab.id} draggableId={tab.id} index={index}>
                   {(provided) => (
-                    <Card
+                    <Card 
                       className="w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.33%-0.67rem)]"
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                     >
                       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <div
-                          {...provided.dragHandleProps}
-                          className="cursor-move"
-                        >
+                        <div {...provided.dragHandleProps} className="cursor-move">
                           <GripVerticalIcon className="h-4 w-4" />
                         </div>
                         {editingTabId === tab.id ? (
                           <Input
                             ref={editInputRef}
                             defaultValue={tab.name}
-                            onBlur={(e) =>
-                              finishEditing(tab.id, e.target.value)
-                            }
+                            onBlur={(e) => finishEditing(tab.id, e.target.value)}
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
-                                finishEditing(
-                                  tab.id,
-                                  (e.target as HTMLInputElement).value
-                                );
+                                finishEditing(tab.id, (e.target as HTMLInputElement).value)
                               }
                             }}
                           />
@@ -228,35 +197,23 @@ export default function MultiTabCalculator() {
                         <div className="flex mb-4">
                           <Input
                             type="text"
-                            value={inputs[tab.id] || ''}
-                            onChange={(e) =>
-                              setInputs({ ...inputs, [tab.id]: e.target.value })
-                            }
+                            value={inputs[tab.id] || ""}
+                            onChange={(e) => setInputs({ ...inputs, [tab.id]: e.target.value })}
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
-                                calculate(tab.id);
+                                calculate(tab.id)
                               }
                             }}
                             placeholder="Enter calculation"
                             className="mr-2"
                           />
-                          <Button onClick={() => calculate(tab.id)}>
-                            Calculate
-                          </Button>
+                          <Button onClick={() => calculate(tab.id)}>Calculate</Button>
                         </div>
                         <Droppable droppableId={tab.id}>
                           {(provided) => (
-                            <ScrollArea
-                              className="h-40 border rounded-md p-2"
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                            >
+                            <ScrollArea className="h-40 border rounded-md p-2" {...provided.droppableProps} ref={provided.innerRef}>
                               {tab.calculations.map((calc, index) => (
-                                <Draggable
-                                  key={calc.id}
-                                  draggableId={calc.id}
-                                  index={index}
-                                >
+                                <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                   {(provided) => (
                                     <div
                                       ref={provided.innerRef}
@@ -264,23 +221,13 @@ export default function MultiTabCalculator() {
                                       {...provided.dragHandleProps}
                                       className="bg-secondary p-2 mb-2 rounded-md flex justify-between items-center"
                                     >
-                                      <div>
-                                        {calc.expression} = {calc.result}
-                                      </div>
+                                      <div>{calc.expression} = {calc.result}</div>
                                       <Button
                                         variant="ghost"
                                         size="sm"
-                                        onClick={() =>
-                                          toggleStar(tab.id, calc.id)
-                                        }
+                                        onClick={() => toggleStar(tab.id, calc.id)}
                                       >
-                                        <StarIcon
-                                          className={`h-4 w-4 ${
-                                            calc.isStarred
-                                              ? 'text-yellow-400 fill-yellow-400'
-                                              : ''
-                                          }`}
-                                        />
+                                        <StarIcon className={`h-4 w-4 ${calc.isStarred ? 'text-yellow-400 fill-yellow-400' : ''}`} />
                                       </Button>
                                     </div>
                                   )}
@@ -311,7 +258,7 @@ export default function MultiTabCalculator() {
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-32 border rounded-md p-2">
-            {starredCalculations.map((calc) => (
+            {starredCalculations.map(calc => (
               <Badge key={calc.id} variant="secondary" className="mr-2 mb-2">
                 {calc.expression} = {calc.result}
               </Badge>
@@ -320,5 +267,5 @@ export default function MultiTabCalculator() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
