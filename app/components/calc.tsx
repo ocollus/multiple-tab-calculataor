@@ -404,9 +404,9 @@ export default function MultiTabCalculator() {
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
-                                        className="bg-secondary text-on-secondary p-2 mb-2 rounded-md flex justify-between items-center"
+                                        className="p-2 mb-2 rounded-md flex justify-between items-center border"
                                       >
-                                        <div className="flex-grow justify-between flex mr-[2px]">
+                                        <div className="flex-grow justify-between flex mx-[8px]">
                                           <div>{calc.expression}</div>
                                           <div className="text-right">= {calc.result}</div>
                                         </div>
@@ -487,7 +487,7 @@ export default function MultiTabCalculator() {
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                       >
-                                        <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary">
+                                        <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary opacity-50 transition-opacity hover:opacity-100 border">
                                           {calc.expression} = {calc.result}
                                         </Badge>
                                       </div>
