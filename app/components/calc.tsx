@@ -286,7 +286,7 @@ export default function MultiTabCalculator() {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="tabs" type="TAB" direction="horizontal">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap justify-between gap-4 mb-4">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4">
                 {tabs.map((tab, index) => (
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
