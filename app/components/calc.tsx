@@ -286,12 +286,12 @@ export default function MultiTabCalculator() {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="tabs" type="TAB" direction="horizontal">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap justify-between gap-4 mb-4">
                 {tabs.map((tab, index) => (
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
                       <Card 
-                        className="w-full md:w-[calc(50%-0.5rem)] lg:w-[calc(33.33%-0.67rem)]"
+                        className="w-full w-[calc(33.333%-1rem)] sm:w-[calc(50%-1rem)] min-w-[200px]"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
@@ -468,7 +468,7 @@ export default function MultiTabCalculator() {
           </Card>
         </DragDropContext>
       </div>
-      <Card className="w-64 min-w-[16rem]">
+      <Card className="w-64 min-w-[16rem] hidden md:block">
         <CardHeader>
           <CardTitle>Side Bar</CardTitle>
         </CardHeader>
