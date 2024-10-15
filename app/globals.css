@@ -3,21 +3,29 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background: #FFFFFF;
+  --on-background: #000000;
+  --surface: #FFFFFF;
+  --on-surface: #000000;
+  --primary: #296bc2;
+  --on-primary: #FFFFFF;
+  --secondary: #03DAC6;
+  --on-secondary: #000000;
+}
+
+.dark {
+  --background: #121212;
+  --on-background: #FFFFFF;
+  --surface: #1E1E1E;
+  --on-surface: #FFFFFF;
+  --primary: #BB86FC;
+  --on-primary: #000000;
+  --secondary: #03DAC6;
+  --on-secondary: #000000;
 }
 
 body::-webkit-scrollbar {
   display: none; /* Hides the scrollbar */
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
 }
 
 @layer base {
@@ -81,6 +89,6 @@ body::-webkit-scrollbar {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background;
   }
 }

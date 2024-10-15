@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon } from "lucide-react"
+import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon, SunIcon, MoonIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -46,6 +46,25 @@ export default function MultiTabCalculator() {
     { id: "row1", name: "Default Row", calculations: [] }
   ])
   const [sidebarItems, setSidebarItems] = useState<SidebarItem[]>([])
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
+    if (savedTheme) {
+      setTheme(savedTheme)
+    } else {
+      setTheme('light')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem('theme', theme)
+      document.documentElement.classList.toggle('dark', theme === 'dark')
+    }
+  }, [theme, mounted])
 
   useEffect(() => {
     const savedTabs = localStorage.getItem('calculatorTabs')
@@ -74,9 +93,26 @@ export default function MultiTabCalculator() {
     }
   }, [editingTabId])
 
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+  }
+
+  if (!mounted) {
+    return null
+  }
+
   const addTab = () => {
-    const newTabId = `tab${tabs.length + 1}`
-    setTabs([...tabs, { id: newTabId, name: `Tab ${tabs.length + 1}`, calculations: [] }])
+    const newTabNumber = tabs.length + 1
+    let newTabName = `Tab ${newTabNumber}`
+    let counter = 1
+
+    while (tabs.some(tab => tab.name === newTabName)) {
+      newTabName = `Tab ${newTabNumber} (${counter})`
+      counter++
+    }
+
+    const newTabId = `tab${Date.now()}`
+    setTabs([...tabs, { id: newTabId, name: newTabName, calculations: [] }])
     setInputs({ ...inputs, [newTabId]: "" })
   }
 
@@ -280,9 +316,14 @@ export default function MultiTabCalculator() {
   }
 
   return (
-    <div className="p-2 mx-auto flex">
-      <div className="flex-grow mr-4">
-        <h1 className="text-2xl font-bold mb-4">Multi-Tab Calculator</h1>
+    <div className={`p-2 mx-auto flex flex-col min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
+      <div className="flex justify-between items-center mb-4 bg-primary text-on-primary p-4 rounded-lg">
+        <h1 className="text-2xl font-bold">Multi-Tab Calculator</h1>
+        <Button variant="outline" size="icon" onClick={toggleTheme} className="bg-surface text-on-surface">
+          {theme === "light" ? <MoonIcon className="h-[1.2rem] w-[1.2rem]" /> : <SunIcon className="h-[1.2rem] w-[1.2rem]" />}
+        </Button>
+      </div>
+      <div className="flex-grow bg-background text-on-background">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="tabs" type="TAB" direction="horizontal">
             {(provided) => (
@@ -291,7 +332,7 @@ export default function MultiTabCalculator() {
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
                       <Card
-                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px]"
+                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px] bg-surface text-on-surface"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
@@ -309,6 +350,7 @@ export default function MultiTabCalculator() {
                                   finishEditing(tab.id, (e.target as HTMLInputElement).value)
                                 }
                               }}
+                              className="bg-background text-on-background"
                             />
                           ) : (
                             <CardTitle className="text-sm font-medium flex-grow">
@@ -348,13 +390,13 @@ export default function MultiTabCalculator() {
                                 }
                               }}
                               placeholder="Enter calculation"
-                              className="mr-2"
+                              className="mr-2 bg-background text-on-background"
                             />
-                            <Button onClick={() => calculate(tab.id)}>Calculate</Button>
+                            <Button onClick={() => calculate(tab.id)} className="bg-primary text-on-primary">Calculate</Button>
                           </div>
                           <Droppable droppableId={tab.id} type="CALCULATION">
                             {(provided) => (
-                              <ScrollArea className="h-40 border rounded-md p-4" {...provided.droppableProps} ref={provided.innerRef}>
+                              <ScrollArea className="h-40 border rounded-md p-4 bg-surface" {...provided.droppableProps} ref={provided.innerRef}>
                                 {tab.calculations.map((calc, index) => (
                                   <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                     {(provided) => (
@@ -362,7 +404,7 @@ export default function MultiTabCalculator() {
                                         ref={provided.innerRef}
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
-                                        className="bg-secondary p-2 mb-2 rounded-md flex justify-between items-center"
+                                        className="bg-secondary text-on-secondary p-2 mb-2 rounded-md flex justify-between items-center"
                                       >
                                         <div className="flex-grow justify-between flex mr-[2px]">
                                           <div>{calc.expression}</div>
@@ -405,10 +447,10 @@ export default function MultiTabCalculator() {
               </div>
             )}
           </Droppable>
-          <Button variant="outline" onClick={addTab} className="mb-4">
+          <Button variant="outline" onClick={addTab} className="mb-4 bg-surface text-on-surface">
             <PlusIcon className="h-4 w-4 mr-2" /> Add Tab
           </Button>
-          <Card>
+          <Card className="bg-surface text-on-surface">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <StarIcon className="mr-2" /> Starred Calculations
@@ -430,6 +472,7 @@ export default function MultiTabCalculator() {
                           <Input
                             value={row.name}
                             onChange={(e) => updateStarredRowName(row.id, e.target.value)}
+                            className="bg-background text-on-background"
                           />
                         </TableCell>
                         <TableCell className="w-[80%]">
@@ -444,7 +487,7 @@ export default function MultiTabCalculator() {
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                       >
-                                        <Badge variant="secondary" className="mr-2 mb-2 text-base">
+                                        <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary">
                                           {calc.expression} = {calc.result}
                                         </Badge>
                                       </div>
@@ -461,61 +504,13 @@ export default function MultiTabCalculator() {
                   </TableBody>
                 </Table>
               </DragDropContext>
-              <Button variant="outline" onClick={addStarredRow} className="mt-4 hidden">
+              <Button variant="outline" onClick={addStarredRow} className="mt-4 hidden bg-surface text-on-surface">
                 <PlusIcon className="h-4 w-4 mr-2" /> Add Row
               </Button>
             </CardContent>
           </Card>
         </DragDropContext>
       </div>
-      <Card className="w-64 min-w-[16rem] hidden">
-        <CardHeader>
-          <CardTitle>Side Bar</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="sidebar" type="SIDEBAR_ITEM">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef}>
-                  {sidebarItems.map((item, index) => (
-                    <Draggable key={item.id} draggableId={item.id} index={index} isDragDisabled={!item.isFrozen}>
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          className="mb-2 flex items-center"
-                        >
-                          <Input
-                            value={item.value}
-                            onChange={(e) => updateSidebarItem(item.id, e.target.value)}
-                            className="mr-2"
-                            disabled={item.isFrozen}
-                          />
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => toggleFreezeSidebarItem(item.id)}
-                          >
-                            <PlusIcon className={`h-4 w-4 ${item.isFrozen ? 'text-blue-500' : ''}`} />
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => deleteSidebarItem(item.id)}>
-                            <XIcon className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-          <Button variant="outline" onClick={addSidebarItem} className="mt-2">
-            <PlusIcon className="h-4 w-4 mr-2" /> Add Item
-          </Button>
-        </CardContent>
-      </Card>
     </div>
   )
 }
