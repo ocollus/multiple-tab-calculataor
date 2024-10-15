@@ -319,8 +319,14 @@ export default function MultiTabCalculator() {
     <div className={`p-2 mx-auto flex flex-col min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
       <div className="flex justify-between items-center mb-4 bg-primary text-on-primary p-4 rounded-lg">
         <h1 className="text-2xl font-bold">Multi-Tab Calculator</h1>
-        <Button variant="outline" size="icon" onClick={toggleTheme} className="bg-surface text-on-surface">
-          {theme === "light" ? <MoonIcon className="h-[1.2rem] w-[1.2rem]" /> : <SunIcon className="h-[1.2rem] w-[1.2rem]" />}
+        <Button variant="outline" size="icon" onClick={toggleTheme}
+          className="bg-surface text-on-surface transition-colors duration-200 hover:bg-primary hover:text-on-primary"
+        >
+          {theme === "light" ? (
+            <SunIcon className="h-[1.2rem] w-[1.2rem] transition-colors" />
+          ) : (
+            <MoonIcon className="h-[1.2rem] w-[1.2rem] transition-colors" />
+          )}
         </Button>
       </div>
       <div className="flex-grow bg-background text-on-background">
@@ -350,7 +356,7 @@ export default function MultiTabCalculator() {
                                   finishEditing(tab.id, (e.target as HTMLInputElement).value)
                                 }
                               }}
-                              className="bg-background text-on-background"
+                              className="bg-background text-on-background max-h-[36px]"
                             />
                           ) : (
                             <CardTitle className="text-sm font-medium flex-grow">
@@ -461,7 +467,7 @@ export default function MultiTabCalculator() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-[20%]">Row Name</TableHead>
+                      <TableHead className="w-[20%] min-w-[160px]">Row Name</TableHead>
                       <TableHead className="w-[80%]">Calculations</TableHead>
                     </TableRow>
                   </TableHeader>
