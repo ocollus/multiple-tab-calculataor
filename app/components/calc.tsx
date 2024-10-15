@@ -295,7 +295,7 @@ export default function MultiTabCalculator() {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
-                        <CardHeader className="flex flex-row items-center ${tab.length === 2 ? 'justify-start' : 'justify-between'} space-y-0 pb-2">
+                        <CardHeader className="flex flex-row items-center space-y-0 pb-2">
                           <div {...provided.dragHandleProps} className="cursor-move">
                             <GripVerticalIcon className="h-4 w-4" />
                           </div>
@@ -468,7 +468,7 @@ export default function MultiTabCalculator() {
           </Card>
         </DragDropContext>
       </div>
-      <Card className="w-64 min-w-[16rem] hidden md:block">
+      <Card className="w-64 min-w-[16rem] hidden">
         <CardHeader>
           <CardTitle>Side Bar</CardTitle>
         </CardHeader>
