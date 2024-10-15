@@ -364,7 +364,7 @@ export default function MultiTabCalculator() {
                                         {...provided.dragHandleProps}
                                         className="bg-secondary p-2 mb-2 rounded-md flex justify-between items-center"
                                       >
-                                        <div className="justify-between flex mr-[2px]">
+                                        <div className="flex-grow justify-between flex mr-[2px]">
                                           <div>{calc.expression}</div>
                                           <div className="text-right">= {calc.result}</div>
                                         </div>
