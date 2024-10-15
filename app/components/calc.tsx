@@ -280,18 +280,18 @@ export default function MultiTabCalculator() {
   }
 
   return (
-    <div className="p-2 max-w-6xl mx-auto flex">
+    <div className="p-2 mx-auto flex">
       <div className="flex-grow mr-4">
         <h1 className="text-2xl font-bold mb-4">Multi-Tab Calculator</h1>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="tabs" type="TAB" direction="horizontal">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4 max-w-[1194px]">
                 {tabs.map((tab, index) => (
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
                       <Card 
-                        className="w-full md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px]"
+                        className="w-full md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px]"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
@@ -354,7 +354,7 @@ export default function MultiTabCalculator() {
                           </div>
                           <Droppable droppableId={tab.id} type="CALCULATION">
                             {(provided) => (
-                              <ScrollArea className="h-40 border rounded-md p-2" {...provided.droppableProps} ref={provided.innerRef}>
+                              <ScrollArea className="h-40 border rounded-md p-4" {...provided.droppableProps} ref={provided.innerRef}>
                                 {tab.calculations.map((calc, index) => (
                                   <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                     {(provided) => (
@@ -364,9 +364,9 @@ export default function MultiTabCalculator() {
                                         {...provided.dragHandleProps}
                                         className="bg-secondary p-2 mb-2 rounded-md flex justify-between items-center"
                                       >
-                                        <div className="flex-grow">
+                                        <div className="justify-between flex mr-[2px]">
                                           <div>{calc.expression}</div>
-                                          <div className="text-right">{calc.result}</div>
+                                          <div className="text-right">= {calc.result}</div>
                                         </div>
                                         <div className="flex items-center">
                                           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -444,7 +444,7 @@ export default function MultiTabCalculator() {
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                       >
-                                        <Badge variant="secondary" className="mr-2 mb-2 text-xs">
+                                        <Badge variant="secondary" className="mr-2 mb-2 text-base">
                                           {calc.expression} = {calc.result}
                                         </Badge>
                                       </div>
@@ -461,7 +461,7 @@ export default function MultiTabCalculator() {
                   </TableBody>
                 </Table>
               </DragDropContext>
-              <Button variant="outline" onClick={addStarredRow} className="mt-4">
+              <Button variant="outline" onClick={addStarredRow} className="mt-4 hidden">
                 <PlusIcon className="h-4 w-4 mr-2" /> Add Row
               </Button>
             </CardContent>
