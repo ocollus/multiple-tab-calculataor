@@ -396,7 +396,7 @@ export default function MultiTabCalculator() {
                           </div>
                           <Droppable droppableId={tab.id} type="CALCULATION">
                             {(provided) => (
-                              <ScrollArea className="h-40 border rounded-md p-4 bg-surface" {...provided.droppableProps} ref={provided.innerRef}>
+                              <ScrollArea className="h-40 border rounded-md p-2 bg-surface" {...provided.droppableProps} ref={provided.innerRef}>
                                 {tab.calculations.map((calc, index) => (
                                   <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                     {(provided) => (
@@ -451,7 +451,7 @@ export default function MultiTabCalculator() {
             <PlusIcon className="h-4 w-4 mr-2" /> Add Tab
           </Button>
           <Card className="bg-surface text-on-surface">
-            <CardHeader>
+            <CardHeader className="p-4">
               <CardTitle className="flex items-center">
                 <StarIcon className="mr-2" /> Starred Calculations
               </CardTitle>
@@ -478,7 +478,7 @@ export default function MultiTabCalculator() {
                         <TableCell className="w-[80%]">
                           <Droppable droppableId={row.id} direction="horizontal">
                             {(provided) => (
-                              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap">
+                              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap content-center">
                                 {row.calculations.map((calc, index) => (
                                   <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                     {(provided) => (
@@ -487,7 +487,7 @@ export default function MultiTabCalculator() {
                                         {...provided.draggableProps}
                                         {...provided.dragHandleProps}
                                       >
-                                        <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary opacity-50 transition-opacity hover:opacity-100 border">
+                                        <Badge variant="secondary" className="mr-2 text-base bg-secondary text-on-secondary opacity-100 transition-opacity hover:opacity-90 border">
                                           {calc.expression} = {calc.result}
                                         </Badge>
                                       </div>
