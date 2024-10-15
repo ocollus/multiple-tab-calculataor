@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon} from "lucide-react"
+import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -49,14 +49,14 @@ export default function MultiTabCalculator() {
 
   useEffect(() => {
     const savedTabs = localStorage.getItem('calculatorTabs')
-    const savedStarred = localStorage.getItem('starredCalculations')
+    const savedStarredRows = localStorage.getItem('starredRows')
     if (savedTabs) {
       setTabs(JSON.parse(savedTabs))
     } else {
       setTabs([{ id: "tab1", name: "Tab 1", calculations: [] }])
     }
-    if (savedStarred) {
-      setStarredCalculations(JSON.parse(savedStarred))
+    if (savedStarredRows) {
+      setStarredRows(JSON.parse(savedStarredRows))
     }
   }, [])
 
@@ -65,8 +65,8 @@ export default function MultiTabCalculator() {
   }, [tabs])
 
   useEffect(() => {
-    localStorage.setItem('starredCalculations', JSON.stringify(starredCalculations))
-  }, [starredCalculations])
+    localStorage.setItem('starredRows', JSON.stringify(starredRows))
+  }, [starredRows])
 
   useEffect(() => {
     if (editingTabId && editInputRef.current) {
@@ -87,8 +87,8 @@ export default function MultiTabCalculator() {
   }
 
   const deleteCalculation = (tabId: string, calcId: string) => {
-    setTabs(tabs.map(tab => 
-      tab.id === tabId 
+    setTabs(tabs.map(tab =>
+      tab.id === tabId
         ? { ...tab, calculations: tab.calculations.filter(calc => calc.id !== calcId) }
         : tab
     ))
@@ -101,7 +101,7 @@ export default function MultiTabCalculator() {
   }
 
   const updateStarredRowName = (rowId: string, newName: string) => {
-    setStarredRows(starredRows.map(row => 
+    setStarredRows(starredRows.map(row =>
       row.id === rowId ? { ...row, name: newName } : row
     ))
   }
@@ -200,7 +200,7 @@ export default function MultiTabCalculator() {
             result: newResult,
             isStarred: false
           }
-          const updatedTabs = tabs.map(tab => 
+          const updatedTabs = tabs.map(tab =>
             tab.id === sourceTab.id
               ? { ...tab, calculations: [...tab.calculations, newCalc] }
               : tab
@@ -216,7 +216,7 @@ export default function MultiTabCalculator() {
   }
 
   const finishEditing = (tabId: string, newName: string) => {
-    setTabs(tabs.map(tab => 
+    setTabs(tabs.map(tab =>
       tab.id === tabId ? { ...tab, name: newName || tab.name } : tab
     ))
     setEditingTabId(null)
@@ -264,13 +264,13 @@ export default function MultiTabCalculator() {
   }
 
   const updateSidebarItem = (id: string, value: string) => {
-    setSidebarItems(items => items.map(item => 
+    setSidebarItems(items => items.map(item =>
       item.id === id ? { ...item, value } : item
     ))
   }
 
   const toggleFreezeSidebarItem = (id: string) => {
-    setSidebarItems(items => items.map(item => 
+    setSidebarItems(items => items.map(item =>
       item.id === id ? { ...item, isFrozen: !item.isFrozen } : item
     ))
   }
@@ -290,8 +290,8 @@ export default function MultiTabCalculator() {
                 {tabs.map((tab, index) => (
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
-                      <Card 
-                        className="w-full md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px]"
+                      <Card
+                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px]"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
@@ -419,20 +419,20 @@ export default function MultiTabCalculator() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Row Name</TableHead>
-                      <TableHead>Calculations</TableHead>
+                      <TableHead className="w-[20%]">Row Name</TableHead>
+                      <TableHead className="w-[80%]">Calculations</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {starredRows.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell>
+                        <TableCell className="w-[20%]">
                           <Input
                             value={row.name}
                             onChange={(e) => updateStarredRowName(row.id, e.target.value)}
                           />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="w-[80%]">
                           <Droppable droppableId={row.id} direction="horizontal">
                             {(provided) => (
                               <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap">
