@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon, SunIcon, MoonIcon } from "lucide-react"
+import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, Trash2Icon, TrashIcon, SunIcon, MoonIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -136,6 +136,22 @@ export default function MultiTabCalculator() {
     setStarredRows([...starredRows, { id: newRowId, name: `New Row ${starredRows.length + 1}`, calculations: [] }])
   }
 
+  const deleteStarredCalculation = (calcId: string) => {
+    const updatedTabs = tabs.map(tab => ({
+      ...tab,
+      calculations: tab.calculations.map(calc =>
+        calc.id === calcId ? { ...calc, isStarred: false } : calc
+      )
+    }))
+
+    setTabs(updatedTabs)
+
+    setStarredRows(rows => rows.map(row => ({
+      ...row,
+      calculations: row.calculations.filter(calc => calc.id !== calcId)
+    })))
+  }
+
   const updateStarredRowName = (rowId: string, newName: string) => {
     setStarredRows(starredRows.map(row =>
       row.id === rowId ? { ...row, name: newName } : row
@@ -165,6 +181,13 @@ export default function MultiTabCalculator() {
       })
 
       setStarredRows(newStarredRows)
+    }
+    if (result.destination.droppableId === 'trash') {
+      const draggedCalc = starredRows[0].calculations.find(calc => calc.id === result.draggableId)
+      if (draggedCalc) {
+        deleteStarredCalculation(draggedCalc.id)
+      }
+      return
     }
   }
 
@@ -412,7 +435,7 @@ export default function MultiTabCalculator() {
                                         {...provided.dragHandleProps}
                                         className="p-2 mb-2 rounded-md flex justify-between items-center border"
                                       >
-                                        <div className="flex-grow justify-between flex mx-[8px] roboto bg-primary text-on-primary">
+                                        <div className="flex-grow justify-between flex mx-[8px] roboto bg-surface text-on-surface">
                                           <div>{calc.expression}</div>
                                           <div className="text-right">= {calc.result}</div>
                                         </div>
@@ -432,7 +455,7 @@ export default function MultiTabCalculator() {
                                               size="sm"
                                               onClick={() => deleteCalculation(tab.id, calc.id)}
                                             >
-                                              <TrashIcon className="h-4 w-4" />
+                                              <Trash2Icon className="h-4 w-4" />
                                             </Button>
                                           </motion.div>
                                         </div>
@@ -457,10 +480,22 @@ export default function MultiTabCalculator() {
             <PlusIcon className="h-4 w-4 mr-2" /> Add Tab
           </Button>
           <Card className="bg-surface text-on-surface">
-            <CardHeader className="p-4">
+            <CardHeader className="p-4 flex flex-row justify-between items-center">
               <CardTitle className="flex items-center">
                 <StarIcon className="mr-2" /> Starred Calculations
               </CardTitle>
+              <Droppable droppableId="trash" direction="horizontal">
+                {(provided) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="w-6 h-6 flex justify-center"
+                  >
+                    <Trash2Icon className="w-5 h-5" />
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
             </CardHeader>
             <CardContent>
               <DragDropContext onDragEnd={onStarredDragEnd}>
@@ -504,9 +539,6 @@ export default function MultiTabCalculator() {
                   </TableBody>
                 </Table>
               </DragDropContext>
-              <Button variant="outline" onClick={addStarredRow} className="mt-4 hidden bg-surface text-on-surface">
-                <PlusIcon className="h-4 w-4 mr-2" /> Add Row
-              </Button>
             </CardContent>
           </Card>
         </DragDropContext>
