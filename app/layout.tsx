@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Roboto } from 'next/font/google';
 import { Noto_Sans_Math } from 'next/font/google';
+import Image from 'next/image';
 
 const inter = Inter({ subsets: ['latin'] });
 const roboto = Roboto({ subsets: ['latin'], weight: ['400', '700'] });
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     siteName: 'MultiTab Calculator', // Your website name
     images: [
       {
-        url: 'https://yourwebsite.com/path/to/thumbnail.jpg', // Thumbnail image URL
+        url: '/thumbnail.png', // Thumbnail image URL
         width: 1200, // Image width
         height: 630, // Image height
         alt: 'Thumbnail description', // Image description
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image', // Twitter card type
     title: 'Your Website Title',
     description: 'A brief description of your website or page.',
-    images: ['https://yourwebsite.com/path/to/thumbnail.jpg'], // Twitter image URL
+    images: ['/thumbnail.jpg'], // Twitter image URL
   },
 };
 
