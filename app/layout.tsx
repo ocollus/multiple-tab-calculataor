@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     type: 'website', // Type of content
   },
   twitter: {
-    card: 'sMultiTab Calculator', // Twitter card type
+    card: 'summary_large_image', // Twitter card type
     title: 'MultiTab Calculator',
     description: 'Multiple Calculator on Multiple Tab',
     images: ['/Frame 11.jpg'], // Twitter image URL
