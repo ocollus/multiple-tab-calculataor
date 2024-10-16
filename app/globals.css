@@ -95,6 +95,7 @@ body::-webkit-scrollbar {
     @apply border-border;
   }
   body {
+    overflow-x: hidden; /* Hide horizontal scrollbar */
     @apply bg-background;
   }
 }
