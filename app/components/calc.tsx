@@ -487,7 +487,7 @@ export default function MultiTabCalculator() {
               <CardTitle className="flex items-center">
                 <StarIcon className="mr-2" /> Starred Calculations
               </CardTitle>
-              <Droppable droppableId="trash" direction="horizontal" type="STARRED_CALCULATION">
+              <Droppable droppableId="trash" direction="horizontal">
                 {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}
