@@ -143,9 +143,7 @@ export default function MultiTabCalculator() {
         calc.id === calcId ? { ...calc, isStarred: false } : calc
       )
     }))
-
     setTabs(updatedTabs)
-
     setStarredRows(rows => rows.map(row => ({
       ...row,
       calculations: row.calculations.filter(calc => calc.id !== calcId)
@@ -242,42 +240,6 @@ export default function MultiTabCalculator() {
 
         setTabs(newTabs)
       }
-    } else if (result.type === "STARRED_CALCULATION") {
-      if (result.destination.droppableId === 'trash') {
-        const draggedCalc = starredRows[0].calculations.find(calc => calc.id === result.draggableId)
-        if (draggedCalc) {
-          deleteStarredCalculation(draggedCalc.id)
-        }
-      } else {
-        // Handle reordering within starred calculations
-        const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
-        const destRow = starredRows.find(row => row.id === result.destination.droppableId)
-
-        if (sourceRow && destRow) {
-          const sourceCalcs = Array.from(sourceRow.calculations)
-          const destCalcs = sourceRow === destRow ? sourceCalcs : Array.from(destRow.calculations)
-          const [reorderedItem] = sourceCalcs.splice(result.source.index, 1)
-          destCalcs.splice(result.destination.index, 0, reorderedItem)
-
-          const newStarredRows = starredRows.map(row => {
-            if (row.id === sourceRow.id) {
-              return { ...row, calculations: sourceCalcs }
-            }
-            if (row.id === destRow.id) {
-              return { ...row, calculations: destCalcs }
-            }
-            return row
-          })
-
-          setStarredRows(newStarredRows)
-        }
-      }
-    } else if (result.type === "STARRED_ROW") {
-      // Handle reordering of starred rows
-      const newStarredRows = Array.from(starredRows)
-      const [reorderedItem] = newStarredRows.splice(result.source.index, 1)
-      newStarredRows.splice(result.destination.index, 0, reorderedItem)
-      setStarredRows(newStarredRows)
     } else if (result.type === "SIDEBAR_ITEM") {
       const { source, destination } = result
       if (!destination) return
@@ -535,66 +497,47 @@ export default function MultiTabCalculator() {
               </Droppable>
             </CardHeader>
             <CardContent>
-              <Droppable droppableId="starredRows" type="STARRED_ROW">
-                {(provided) => (
-                  <div {...provided.droppableProps} ref={provided.innerRef}>
-                    {starredRows.map((row, rowIndex) => (
-                      <Draggable key={row.id} draggableId={row.id} index={rowIndex}>
-                        {(provided) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                          >
-                            <Table>
-                              <TableBody>
-                                <TableRow>
-                                  <TableCell className="w-[20%] min-w-[160px] px-4 pb-4 pt-2">
-                                    <div className="flex items-center">
-                                      <div {...provided.dragHandleProps}>
-                                        <GripVerticalIcon className="h-4 w-4 mr-2" />
+              <DragDropContext onDragEnd={onStarredDragEnd}>
+                <Table>
+                  <TableBody>
+                    {starredRows.map((row) => (
+                      <TableRow key={row.id}>
+                        <TableCell className="w-[20%] min-w-[160px] px-4 pb-4 pt-2">
+                          <Input
+                            value={row.name}
+                            onChange={(e) => updateStarredRowName(row.id, e.target.value)}
+                            className="bg-background text-on-background"
+                          />
+                        </TableCell>
+                        <TableCell className="w-[80%]">
+                          <Droppable droppableId={row.id} direction="horizontal">
+                            {(provided) => (
+                              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap content-center">
+                                {row.calculations.map((calc, index) => (
+                                  <Draggable key={calc.id} draggableId={calc.id} index={index}>
+                                    {(provided) => (
+                                      <div
+                                        ref={provided.innerRef}
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                      >
+                                        <Badge variant="secondary" className="mr-2 text-base bg-secondary text-on-secondary opacity-100 transition-opacity hover:opacity-90 border">
+                                          {calc.expression} = {calc.result}
+                                        </Badge>
                                       </div>
-                                      <Input
-                                        value={row.name}
-                                        onChange={(e) => updateStarredRowName(row.id, e.target.value)}
-                                        className="bg-background text-on-background"
-                                      />
-                                    </div>
-                                  </TableCell>
-                                  <TableCell className="w-[80%]">
-                                    <Droppable droppableId={row.id} direction="horizontal" type="STARRED_CALCULATION">
-                                      {(provided) => (
-                                        <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap content-center">
-                                          {row.calculations.map((calc, index) => (
-                                            <Draggable key={calc.id} draggableId={calc.id} index={index}>
-                                              {(provided) => (
-                                                <div
-                                                  ref={provided.innerRef}
-                                                  {...provided.draggableProps}
-                                                  {...provided.dragHandleProps}
-                                                >
-                                                  <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary opacity-100 transition-opacity hover:opacity-90 border">
-                                                    {calc.expression} = {calc.result}
-                                                  </Badge>
-                                                </div>
-                                              )}
-                                            </Draggable>
-                                          ))}
-                                          {provided.placeholder}
-                                        </div>
-                                      )}
-                                    </Droppable>
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </div>
-                        )}
-                      </Draggable>
+                                    )}
+                                  </Draggable>
+                                ))}
+                                {provided.placeholder}
+                              </div>
+                            )}
+                          </Droppable>
+                        </TableCell>
+                      </TableRow>
                     ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
+                  </TableBody>
+                </Table>
+              </DragDropContext>
             </CardContent>
           </Card>
         </DragDropContext>
