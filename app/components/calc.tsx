@@ -145,6 +145,17 @@ export default function MultiTabCalculator() {
   const onStarredDragEnd = (result: any) => {
     if (!result.destination) return
 
+    if (result.destination.droppableId === 'trash') {
+      const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
+      if (sourceRow) {
+        const draggedCalc = sourceRow.calculations[result.source.index]
+        if (draggedCalc) {
+          deleteStarredCalculation(draggedCalc.id)
+        }
+      }
+      return
+    }
+
     const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
     const destRow = starredRows.find(row => row.id === result.destination.droppableId)
 
@@ -165,15 +176,6 @@ export default function MultiTabCalculator() {
       })
 
       setStarredRows(newStarredRows)
-    }
-    if (result.destination.droppableId === 'trash') {
-      const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
-      if (sourceRow) {
-        const draggedCalc = sourceRow.calculations[result.source.index]
-        if (draggedCalc) {
-          deleteStarredCalculation(draggedCalc.id)
-        }
-      }
     }
   }
 
