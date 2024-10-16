@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, Trash2Icon, TrashIcon, SunIcon, MoonIcon } from "lucide-react"
+import { PlusIcon, EditIcon, StarIcon, GripVerticalIcon, XIcon, TrashIcon, Trash2Icon, SunIcon, MoonIcon } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
@@ -241,6 +241,36 @@ export default function MultiTabCalculator() {
         })
 
         setTabs(newTabs)
+      }
+    } else if (result.type === "STARRED_CALCULATION") {
+      if (result.destination.droppableId === 'trash') {
+        const draggedCalc = starredRows[0].calculations.find(calc => calc.id === result.draggableId)
+        if (draggedCalc) {
+          deleteStarredCalculation(draggedCalc.id)
+        }
+      } else {
+        // Handle reordering within starred calculations if needed
+        const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
+        const destRow = starredRows.find(row => row.id === result.destination.droppableId)
+
+        if (sourceRow && destRow) {
+          const sourceCalcs = Array.from(sourceRow.calculations)
+          const destCalcs = sourceRow === destRow ? sourceCalcs : Array.from(destRow.calculations)
+          const [reorderedItem] = sourceCalcs.splice(result.source.index, 1)
+          destCalcs.splice(result.destination.index, 0, reorderedItem)
+
+          const newStarredRows = starredRows.map(row => {
+            if (row.id === sourceRow.id) {
+              return { ...row, calculations: sourceCalcs }
+            }
+            if (row.id === destRow.id) {
+              return { ...row, calculations: destCalcs }
+            }
+            return row
+          })
+
+          setStarredRows(newStarredRows)
+        }
       }
     } else if (result.type === "SIDEBAR_ITEM") {
       const { source, destination } = result
@@ -484,12 +514,13 @@ export default function MultiTabCalculator() {
               <CardTitle className="flex items-center">
                 <StarIcon className="mr-2" /> Starred Calculations
               </CardTitle>
-              <Droppable droppableId="trash" direction="horizontal">
-                {(provided) => (
+              <Droppable droppableId="trash" direction="horizontal" type="STARRED_CALCULATION">
+                {(provided, snapshot) => (
                   <div
                     {...provided.droppableProps}
                     ref={provided.innerRef}
-                    className="w-6 h-6 flex justify-center"
+                    className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${snapshot.isDraggingOver ? 'bg-red-500' : 'bg-gray-200'
+                      }`}
                   >
                     <Trash2Icon className="w-5 h-5" />
                     {provided.placeholder}
@@ -498,47 +529,45 @@ export default function MultiTabCalculator() {
               </Droppable>
             </CardHeader>
             <CardContent>
-              <DragDropContext onDragEnd={onStarredDragEnd}>
-                <Table>
-                  <TableBody>
-                    {starredRows.map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell className="w-[20%] min-w-[160px] px-4 pb-4 pt-2">
-                          <Input
-                            value={row.name}
-                            onChange={(e) => updateStarredRowName(row.id, e.target.value)}
-                            className="bg-background text-on-background"
-                          />
-                        </TableCell>
-                        <TableCell className="w-[80%]">
-                          <Droppable droppableId={row.id} direction="horizontal">
-                            {(provided) => (
-                              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap content-center">
-                                {row.calculations.map((calc, index) => (
-                                  <Draggable key={calc.id} draggableId={calc.id} index={index}>
-                                    {(provided) => (
-                                      <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                      >
-                                        <Badge variant="secondary" className="mr-2 text-base bg-secondary text-on-secondary opacity-100 transition-opacity hover:opacity-90 border">
-                                          {calc.expression} = {calc.result}
-                                        </Badge>
-                                      </div>
-                                    )}
-                                  </Draggable>
-                                ))}
-                                {provided.placeholder}
-                              </div>
-                            )}
-                          </Droppable>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </DragDropContext>
+              <Table>
+                <TableBody>
+                  {starredRows.map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell className="w-[20%] min-w-[160px] px-4 pb-4 pt-2">
+                        <Input
+                          value={row.name}
+                          onChange={(e) => updateStarredRowName(row.id, e.target.value)}
+                          className="bg-background text-on-background"
+                        />
+                      </TableCell>
+                      <TableCell className="w-[80%]">
+                        <Droppable droppableId={row.id} direction="horizontal" type="STARRED_CALCULATION">
+                          {(provided) => (
+                            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap content-center">
+                              {row.calculations.map((calc, index) => (
+                                <Draggable key={calc.id} draggableId={calc.id} index={index}>
+                                  {(provided) => (
+                                    <div
+                                      ref={provided.innerRef}
+                                      {...provided.draggableProps}
+                                      {...provided.dragHandleProps}
+                                    >
+                                      <Badge variant="secondary" className="mr-2 mb-2 text-base bg-secondary text-on-secondary opacity-100 transition-opacity hover:opacity-90 border">
+                                        {calc.expression} = {calc.result}
+                                      </Badge>
+                                    </div>
+                                  )}
+                                </Draggable>
+                              ))}
+                              {provided.placeholder}
+                            </div>
+                          )}
+                        </Droppable>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </DragDropContext>
