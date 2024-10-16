@@ -28,6 +28,12 @@ body::-webkit-scrollbar {
   display: none; /* Hides the scrollbar */
 }
 
+.roboto {
+  font-family: 'Roboto', sans-serif; /* Roboto font for specific elements */
+}
+.inter {
+  font-family: 'Inter', sans-serif;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

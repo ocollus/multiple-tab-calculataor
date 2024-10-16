@@ -317,7 +317,7 @@ export default function MultiTabCalculator() {
 
   return (
     <div className={`p-2 mx-auto flex flex-col min-h-screen ${theme === 'dark' ? 'dark' : ''}`}>
-      <div className="flex justify-between items-center mb-4 bg-primary text-on-primary p-4 rounded-lg">
+      <div className="flex justify-between items-center mb-4 bg-primary text-on-primary p-4 rounded-lg min-w-[400px]">
         <h1 className="text-2xl font-bold">Multi-Tab Calculator</h1>
         <Button variant="outline" size="icon" onClick={toggleTheme}
           className="bg-surface text-on-surface transition-colors duration-200 hover:bg-primary hover:text-on-primary"
@@ -402,7 +402,7 @@ export default function MultiTabCalculator() {
                           </div>
                           <Droppable droppableId={tab.id} type="CALCULATION">
                             {(provided) => (
-                              <ScrollArea className="h-40 border rounded-md p-2 bg-surface" {...provided.droppableProps} ref={provided.innerRef}>
+                              <ScrollArea className="h-[204px] border rounded-md p-2 bg-surface" {...provided.droppableProps} ref={provided.innerRef}>
                                 {tab.calculations.map((calc, index) => (
                                   <Draggable key={calc.id} draggableId={calc.id} index={index}>
                                     {(provided) => (
@@ -412,7 +412,7 @@ export default function MultiTabCalculator() {
                                         {...provided.dragHandleProps}
                                         className="p-2 mb-2 rounded-md flex justify-between items-center border"
                                       >
-                                        <div className="flex-grow justify-between flex mx-[8px]">
+                                        <div className="flex-grow justify-between flex mx-[8px] roboto bg-primary text-on-primary">
                                           <div>{calc.expression}</div>
                                           <div className="text-right">= {calc.result}</div>
                                         </div>
@@ -465,16 +465,10 @@ export default function MultiTabCalculator() {
             <CardContent>
               <DragDropContext onDragEnd={onStarredDragEnd}>
                 <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[20%] min-w-[160px]">Row Name</TableHead>
-                      <TableHead className="w-[80%]">Calculations</TableHead>
-                    </TableRow>
-                  </TableHeader>
                   <TableBody>
                     {starredRows.map((row) => (
                       <TableRow key={row.id}>
-                        <TableCell className="w-[20%]">
+                        <TableCell className="w-[20%] min-w-[160px] px-4 pb-4 pt-2">
                           <Input
                             value={row.name}
                             onChange={(e) => updateStarredRowName(row.id, e.target.value)}
