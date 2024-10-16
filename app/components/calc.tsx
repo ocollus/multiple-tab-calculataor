@@ -391,7 +391,7 @@ export default function MultiTabCalculator() {
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
                       <Card
-                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[400px] bg-surface text-on-surface"
+                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[250px] max-w-[400px] bg-surface text-on-surface"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >

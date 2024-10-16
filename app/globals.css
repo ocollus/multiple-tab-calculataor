@@ -30,7 +30,12 @@ body::-webkit-scrollbar {
 
 .roboto {
   font-family: 'Roboto', sans-serif; /* Roboto font for specific elements */
+  font-weight: 450;
 }
+.noto-sans-math {
+  font-family: 'Noto Sans Math', sans-serif;
+}
+
 .inter {
   font-family: 'Inter', sans-serif;
 }
