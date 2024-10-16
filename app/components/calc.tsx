@@ -136,20 +136,6 @@ export default function MultiTabCalculator() {
     setStarredRows([...starredRows, { id: newRowId, name: `New Row ${starredRows.length + 1}`, calculations: [] }])
   }
 
-  const deleteStarredCalculation = (calcId: string) => {
-    const updatedTabs = tabs.map(tab => ({
-      ...tab,
-      calculations: tab.calculations.map(calc =>
-        calc.id === calcId ? { ...calc, isStarred: false } : calc
-      )
-    }))
-    setTabs(updatedTabs)
-    setStarredRows(rows => rows.map(row => ({
-      ...row,
-      calculations: row.calculations.filter(calc => calc.id !== calcId)
-    })))
-  }
-
   const updateStarredRowName = (rowId: string, newName: string) => {
     setStarredRows(starredRows.map(row =>
       row.id === rowId ? { ...row, name: newName } : row
@@ -181,13 +167,30 @@ export default function MultiTabCalculator() {
       setStarredRows(newStarredRows)
     }
     if (result.destination.droppableId === 'trash') {
-      const draggedCalc = starredRows[0].calculations.find(calc => calc.id === result.draggableId)
-      if (draggedCalc) {
-        deleteStarredCalculation(draggedCalc.id)
+      const sourceRow = starredRows.find(row => row.id === result.source.droppableId)
+      if (sourceRow) {
+        const draggedCalc = sourceRow.calculations[result.source.index]
+        if (draggedCalc) {
+          deleteStarredCalculation(draggedCalc.id)
+        }
       }
-      return
     }
   }
+
+  const deleteStarredCalculation = (calcId: string) => {
+    const updatedTabs = tabs.map(tab => ({
+      ...tab,
+      calculations: tab.calculations.map(calc =>
+        calc.id === calcId ? { ...calc, isStarred: false } : calc
+      )
+    }))
+    setTabs(updatedTabs)
+    setStarredRows(rows => rows.map(row => ({
+      ...row,
+      calculations: row.calculations.filter(calc => calc.id !== calcId)
+    })))
+  }
+
 
   const calculate = (tabId: string) => {
     try {
