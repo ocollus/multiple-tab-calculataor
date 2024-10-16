@@ -11,17 +11,17 @@ const notoSansMath = Noto_Sans_Math({ subsets: ['math'], weight: ['400'] });
 
 export const metadata: Metadata = {
   title: 'MultiTab Calculator',
-  description: 'MultiTab Calculator',
+  description: 'Multiple Calculator on Multiple Tab',
   openGraph: {
     title: 'MultiTab Calculator', // Same as title above
-    description: 'MultiTab Calculator.', // Same as description above
+    description: 'Multiple Calculator on Multiple Tab', // Same as description above
     url: 'https://multiple-tab-calculator.vercel.app/', // Your website URL
     siteName: 'MultiTab Calculator', // Your website name
     images: [
       {
-        url: '/thumbnail.png', // Thumbnail image URL
-        width: 1200, // Image width
-        height: 630, // Image height
+        url: '/Frame 11.png', // Thumbnail image URL
+        width: 800, // Image width
+        height: 450, // Image height
         alt: 'Thumbnail description', // Image description
       },
     ],
@@ -29,10 +29,10 @@ export const metadata: Metadata = {
     type: 'website', // Type of content
   },
   twitter: {
-    card: 'summary_large_image', // Twitter card type
-    title: 'Your Website Title',
-    description: 'A brief description of your website or page.',
-    images: ['/thumbnail.jpg'], // Twitter image URL
+    card: 'sMultiTab Calculator', // Twitter card type
+    title: 'MultiTab Calculator',
+    description: 'Multiple Calculator on Multiple Tab',
+    images: ['/Frame 11.jpg'], // Twitter image URL
   },
 };
 
