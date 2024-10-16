@@ -329,16 +329,16 @@ export default function MultiTabCalculator() {
           )}
         </Button>
       </div>
-      <div className="flex-grow bg-background text-on-background">
+      <div className="flex-grow">
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="tabs" type="TAB" direction="horizontal">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4 max-w-[1194px]">
+              <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-wrap gap-4 mb-4 max-w-[1000px] w-[calc(100% - 4px)] -mr-4">
                 {tabs.map((tab, index) => (
                   <Draggable key={tab.id} draggableId={tab.id} index={index}>
                     {(provided) => (
                       <Card
-                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[350px] bg-surface text-on-surface"
+                        className="md:w-[calc(33.333%-1rem)] w-[calc(50%-1rem)] min-w-[200px] max-w-[400px] bg-surface text-on-surface"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                       >
